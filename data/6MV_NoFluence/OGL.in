@@ -1,0 +1,67 @@
+/vis/scene/create
+/vis/verbose 5
+/vis/open OGL 1200x800-0+0
+/vis/ogl/set/displayListLimit 1000000
+/vis/viewer/set/autoRefresh false
+/vis/viewer/set/globalLineWidthScale 2
+/vis/viewer/set/defaultTextColour 1 1 1
+
+#Specify scene perspective
+
+
+/vis/viewer/set/style wireframe
+
+/vis/drawVolume
+/vis/drawVolume world
+/vis/set/colour 0.1 0.1 0.1
+/vis/scene/add/volume world
+/vis/drawVolume tumor
+/vis/set/colour 0.1 0.1 0.1
+/vis/scene/add/volume tumor
+/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/zoomTo 3
+/vis/viewer/panTo 0 0 mm
+/vis/viewer/set/hiddenEdge true
+
+
+/vis/viewer/flush
+#/vis/scene/add/eventID
+/vis/scene/add/trajectories rich
+
+
+/vis/scene/add/scale 1 mm z 1 1 1 manual 0 25 -400 mm
+#/vis/scene/add/text 0 25 -400 mm 200 0 10 1mm
+
+
+
+/vis/modeling/trajectories/create/drawByAttribute
+/vis/modeling/trajectories/drawByAttribute-0/setAttribute CPN
+#/vis/filtering/trajectories/create/attributeFilter
+
+/vis/modeling/trajectories/drawByAttribute-0/addValue primary_key Primary
+/vis/modeling/trajectories/drawByAttribute-0/addValue fluor_key OpTissueFluor
+/vis/modeling/trajectories/drawByAttribute-0/addValue cerenkov_key Cerenkov
+
+/vis/modeling/trajectories/drawByAttribute-0/primary_key/setLineColour gray 
+/vis/modeling/trajectories/drawByAttribute-0/fluor_key/setLineColour yellow
+/vis/modeling/trajectories/drawByAttribute-0/cerenkov_key/setLineColour blue
+
+/control/alias timeStep 0.05
+/vis/modeling/trajectories/drawByAttribute-0/primary_key/setTimeSliceInterval {timeStep} ns
+/vis/modeling/trajectories/drawByAttribute-0/fluor_key/setTimeSliceInterval {timeStep} ns
+/vis/modeling/trajectories/drawByAttribute-0/cerenkov_key/setTimeSliceInterval {timeStep} ns
+
+/vis/modeling/trajectories/list
+/vis/viewer/set/autoRefresh true
+/vis/scene/endOfEventAction accumulate 1000
+/run/beamOn 300
+/vis/ogl/set/fade 1
+/control/alias timeRange 0.2
+#/vis/ogl/set/exportFormat svg
+#/vis/ogl/set/displayHeadTime true
+#/vis/ogl/export Test_0
+#/control/loop movie.loop startTime 0.05 {timeRange} {timeStep}
+
+
+#/vis/viewer/update
+#/vis/viewer/flush

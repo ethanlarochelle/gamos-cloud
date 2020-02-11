@@ -1,0 +1,7 @@
+0mm:	(Starting N:620581),	Exiting: 101.37%,	Surface: 25.23% (156575)
+1mm:	(Starting N:551419),	Exiting: 98.92%,	Surface: 16.81% (92709)
+2mm:	(Starting N:473984),	Exiting: 95.66%,	Surface: 7.86% (37252)
+3mm:	(Starting N:611602),	Exiting: 93.09%,	Surface: 6.83% (41800)
+5mm:	(Starting N:785005),	Exiting: 89.54%,	Surface: 5.11% (40097)
+7mm:	(Starting N:499189),	Exiting: 90.52%,	Surface: 3.63% (18130)
+

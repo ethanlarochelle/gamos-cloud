@@ -1,0 +1,3 @@
+/vis/ogl/set/startTime {startTime} ns {timeRange} ns
+/control/shell sleep 0.2
+/vis/ogl/printEPS

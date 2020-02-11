@@ -1,0 +1,7 @@
+0mm:	FWHM:7.48mm,	Max:2056,	Mean:1502.2
+1mm:	FWHM:6.38mm,	Max:1216,	Mean:865.2
+2mm:	FWHM:11.73mm,	Max:208,	Mean:143.1
+3mm:	FWHM:10.88mm,	Max:249,	Mean:165.5
+5mm:	FWHM:11.00mm,	Max:224,	Mean:153.7
+7mm:	FWHM:11.06mm,	Max:105,	Mean:73.7
+

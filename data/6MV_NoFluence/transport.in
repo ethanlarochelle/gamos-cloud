@@ -1,0 +1,127 @@
+/gamos/random/setSeeds 1001 1001
+
+/gamos/verbosity GmUAVerbosity 0
+/gamos/setParam GmAnalysisMgr:FileNameSuffix 6MV_NF
+/gamos/setParam GmGeometryFromText:FileName world.geom
+/gamos/geometry GmGeometryFromText
+
+/gamos/physicsList GmEMPhysics
+/gamos/generator GmGenerator
+
+# DEFINE SOURCE GEOMETRY
+# PHASESPACE FILE INPUT
+#/gamos/setParam IAEArecord:ExtraLongSize 32
+#/gamos/setParam RTGeneratorPhaseSpace:FileName VarianClinaciX_6MV_1x1
+#/gamos/setParam RTGeneratorPhaseSpace:InitialDisplacement 0. 0. -25.*mm
+#/gamos/setParam RTGeneratorPhaseSpace:Transformations RTPS -3.14 0. 0.
+#/gamos/setParam RTGeneratorPhaseSpace:MaxNReuse 1
+#/gamos/setParam RTGeneratorPhaseSpace:MaxNRecycle 3
+#/gamos/generator RTGeneratorPhaseSpace
+
+/run/initialize
+/gamos/physics/addPhysics tissue-optics
+/gamos/physics/addPhysics cerenkov
+/gamos/setParam G4OpTissueFluor:TimeProfile exponential
+/gamos/setParam G4OpTissueFluor:Method interpolate
+/gamos/setParam G4OpCerenkov:Method interpolate
+
+# MANUAL SOURCE INPUT
+/gamos/generator/addSingleParticleSource MySource gamma 6*MeV
+/gamos/generator/energyDist MySource GmGenerDistEnergyFromFile 6MV_distribution.txt interpolate
+/gamos/generator/positionDist MySource GmGenerDistPositionSquare 5*mm 0.0*mm 0.0*mm 450.0*mm 0 0 1
+/gamos/generator/directionDist MySource GmGenerDistDirectionCone 0 0 -1 0.97*deg
+
+
+
+# DEFINE DETECTORS
+/gamos/filter enter_probe_filt GmEnterLogicalVolumeFilter surface_detector
+/gamos/filter in_tumor_filt GmInLogicalVolumeFilter tumor_inclusion
+/gamos/filter exit_tumor_filt GmExitLogicalVolumeFilter tumor_inclusion
+/gamos/filter start_tumor_filt GmStartLogicalVolumeFilter tumor_inclusion
+/gamos/filter opt_filt GmStringDataFilter Particle opticalphoton
+/gamos/filter fluor_filt GmStringDataFilter CreatorProcess OpTissueFluor
+/gamos/filter cerenkov_filt GmStringDataFilter CreatorProcess Cerenkov
+/gamos/filter primary_filt GmStringDataFilter CreatorProcess Primary
+/gamos/filter secondary_filt GmSecondaryFilter
+/gamos/filter secondary_op_filt GmANDFilter secondary_filt fluor_filt
+
+/gamos/filter f_detect_fl_surface GmANDFilter enter_probe_filt fluor_filt
+/gamos/filter f_detect_fl_start_tumor GmANDFilter start_tumor_filt fluor_filt
+/gamos/filter f_detect_fl_exit_tumor GmANDFilter exit_tumor_filt fluor_filt
+/gamos/filter f_detect_parent_of_sec GmParentFilter secondary_filt
+/gamos/filter f_detect_opt_parent_of_sec GmANDFilter f_detect_parent_of_sec opt_filt
+/gamos/filter f_detect_opt_parent_tumor GmANDFilter f_detect_opt_parent_of_sec in_tumor_filt
+
+/gamos/filter f_detect_cerenkov_surface GmANDFilter enter_probe_filt cerenkov_filt
+/gamos/filter f_detect_cerenkov_in_tumor GmANDFilter in_tumor_filt cerenkov_filt
+/gamos/filter f_detect_cerenkov_exit_tumor GmANDFilter exit_tumor_filt cerenkov_filt
+
+/gamos/filter f_opt_in_tumor GmANDFilter opt_filt in_tumor_filt 
+/gamos/filter f_primary_opt_in_tumor GmANDFilter in_tumor_filt primary_filt opt_filt
+/gamos/filter f_primary_opt_exit_tumor GmANDFilter exit_tumor_filt primary_filt opt_filt
+# This filter crashes GAMOS...
+#/gamos/filter f_future_fl_opt_tumor GmFutureWithChildrenFilter in_tumor_filt fluor_filt 
+
+
+### Fluorescence detection ###
+/gamos/userAction GmStepDataTextFileUA f_detect_fl_surface
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_surface:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_surface:FileName Detect_fl_at_surface.txt
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_surface:WriteHeaderData 1
+
+/gamos/userAction GmStepDataTextFileUA f_detect_fl_start_tumor
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_start_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_start_tumor:FileName Detect_fl_start_tumor.txt
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_start_tumor:WriteHeaderData 1
+
+/gamos/userAction GmStepDataTextFileUA f_detect_fl_exit_tumor
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_exit_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_exit_tumor:FileName Detect_fl_exit_tumor.txt
+/gamos/setParam GmStepDataTextFileUA_f_detect_fl_exit_tumor:WriteHeaderData 1
+
+# "Excitation" of fluoresence from secondaries (like Cerenkov)
+/gamos/userAction GmTrackDataTextFileUA f_detect_opt_parent_tumor
+/gamos/setParam GmTrackDataTextFileUA_f_detect_opt_parent_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmTrackDataTextFileUA_f_detect_opt_parent_tumor:FileName Detect_fl_sec_excitation_in_tumor.txt
+/gamos/setParam GmTrackDataTextFileUA_f_detect_opt_parent_tumor:WriteHeaderData 1
+
+### Cerenkov detection ###
+/gamos/userAction GmStepDataTextFileUA f_detect_cerenkov_surface
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_surface:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_surface:FileName Detect_Cerenkov_at_surface.txt
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_surface:WriteHeaderData 1
+
+/gamos/userAction GmStepDataTextFileUA f_detect_cerenkov_in_tumor
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_in_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_in_tumor:FileName Detect_Cerenkov_in_tumor.txt
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_in_tumor:WriteHeaderData 1
+
+/gamos/userAction GmStepDataTextFileUA f_detect_cerenkov_exit_tumor
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_exit_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_exit_tumor:FileName Detect_Cerenkov_exit_tumor.txt
+/gamos/setParam GmStepDataTextFileUA_f_detect_cerenkov_exit_tumor:WriteHeaderData 1
+
+### Primary optical photons in/exiting tumor ###
+/gamos/userAction GmStepDataTextFileUA f_primary_opt_in_tumor
+/gamos/setParam GmStepDataTextFileUA_f_primary_opt_in_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_primary_opt_in_tumor:FileName Detect_primary_in_tumor.txt
+/gamos/setParam GmStepDataTextFileUA_f_primary_opt_in_tumor:WriteHeaderData 1
+
+/gamos/userAction GmStepDataTextFileUA f_primary_opt_exit_tumor
+/gamos/setParam GmStepDataTextFileUA_f_primary_opt_exit_tumor:DataList EventID TrackID FinalPosX FinalPosY FinalPosZ WavelengthEnergy*nm
+/gamos/setParam GmStepDataTextFileUA_f_primary_opt_exit_tumor:FileName Detect_primary_exit_tumor.txt
+/gamos/setParam GmStepDataTextFileUA_f_primary_opt_exit_tumor:WriteHeaderData 1
+
+
+# REPORT PROGRESS OF SIMULATION
+/gamos/userAction GmCountTracksUA
+/gamos/userAction GmCountProcessesUA
+#/gamos/setParam GmCountTracksUA:EachNEvent 100
+
+
+# RUN THE SIMULATION AND VISUALIZE
+#/control/execute OGL.in
+#/control/execute VRML.in
+/run/beamOn 10000
+
+

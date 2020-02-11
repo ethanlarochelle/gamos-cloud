@@ -1,0 +1,31 @@
+/vis/scene/create
+/vis/open VRML2FILE
+
+
+
+/vis/viewer/flush
+
+/vis/scene/add/trajectories rich
+
+
+
+/vis/modeling/trajectories/create/drawByParticleID Trajectories
+/vis/modeling/trajectories/Trajectories/set e- green
+/vis/modeling/trajectories/Trajectories/set opticalphoton blue
+/vis/modeling/trajectories/Trajectories/set gamma red
+/vis/modeling/trajectories/Trajectories/set e+ magenta
+
+
+
+/vis/filtering/trajectories/create/particleFilter
+/vis/filtering/trajectories/particleFilter-0/add e-
+/vis/filtering/trajectories/particleFilter-0/add opticalphoton
+/vis/filtering/trajectories/particleFilter-0/add gamma  
+/vis/filtering/trajectories/particleFilter-0/add e+  
+
+/vis/scene/endOfEventAction accumulate 10000
+
+
+
+/vis/viewer/update
+/vis/viewer/flush
