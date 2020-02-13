@@ -3,14 +3,14 @@ The notebooks in this module demonstrate how GAMOS 6.1 with the Dartmouth tissue
 
 The code is organized into four Python Notebooks.
 
-## gamos-structure-viz.ipynb
+## [gamos-structure-viz.ipynb](code/gamos-structure-viz.ipynb)
 This notebook provides a graphical representation of the GAMOS code structure.
 
-## gamos-geom-mpt-helper.ipynb
+## [gamos-geom-mpt-helper.ipynb](code/gamos-geom-mpt-helper.ipynb)
 Defining wavelength-dependent optical properties to materials in GAMOS can be a time-consuming and error-prone process. This notebook tries to address this for simple multi-layer geometries by reading the definitions from an Excel spreadsheet and converting it to a GAMOS-compatible world.geom text file.
 
-## gamos-cloud-config.ipynb
+## [gamos-cloud-config.ipynb](code/gamos-cloud-config.ipynb)
 The bulk of the code is provided in this notebook. Using the AWS Python SDK (Boto3), this notebook demonstrates how to create the initial GAMOS container, and then goes further into how to define AWS Batch jobs which can be used to run multiple simulations in parallel.
 
-## gamos-sim-analysis.ipynb
+## [gamos-sim-analysis.ipynb](code/gamos-sim-analysis.ipynb)
 Examples of how to re-combine the simulation output files is provided in this notebook.
