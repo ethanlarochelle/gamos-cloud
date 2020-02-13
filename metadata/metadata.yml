@@ -1,0 +1,20 @@
+metadata_version: 1
+name: Cloud deployment of GEANT4-GAMOS with tissue optics plugin
+description: "A parallel container-based implementation of GAMOS for Monte Carlo modeling
+  radiation-induced light transport using on-demand cloud infrastructure.\n\nThis
+  work advances a Monte Carlo (MC) method to combine ionizing radiation physics with
+  optical physics, in a manner which was implicitly designed for deployment with the
+  most widely accessible parallelization and portability possible.  \nThe current
+  work updates a previously developed optical propagation plugin for GEANT4 architecture
+  for medically oriented simulations (GAMOS). A method to programmatically deploy
+  multiple containers to achieve parallel execution using an on-demand cloud-based
+  infrastructure is presented. A container-based GAMOS deployment is demonstrated
+  using a multi-layer tissue model and both optical and X-ray source inputs."
+tags:
+- monte-carlo
+- cloud-computing
+- tissue-optics
+- radiation
+corresponding_contributor:
+  name: Ethan LaRochelle
+  email: ethan.phillip.m.larochelle.th@dartmouth.edu
